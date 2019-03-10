@@ -1,0 +1,344 @@
+swagger: "2.0"
+info:
+  description: This is the swagger file that goes with our server code
+  version: "1.0.0"
+  title: Swaggeroni
+
+consumes:
+  - application/json
+produces:
+  - application/json
+  - application/xml
+
+basePath: /v1
+
+paths:
+  /airports:
+    get:
+      operationId: airlines.airports
+      tags:
+        - airports
+      summary: blabla
+      description: Read the list of airports
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: content_type
+          in: query
+          description: json/xml
+          required: false
+          type: string
+
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Airports'
+
+
+  /airports/{airport_code}/carriers:
+    get:
+      operationId: airlines.airport_carriers
+      tags:
+        - airports
+      summary: blabla
+      description: Read lis of carriers for a given airport
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: path
+          name: airport_code
+          type: string
+          required: true
+          description: code of the airport
+
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Carriers'
+
+  /carriers:
+    get:
+      operationId: airlines.carriers
+      tags:
+        - carriers
+      summary: blabla
+      description: Read lis of carriers for a given airport
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: path
+          name: airport_code
+          type: string
+          required: true
+          description: code of the airport
+
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Carriers'
+
+  /carriers/{carrier_code}/statistics:
+    get:
+      operationId: airlines.carrier_get_statistics
+      tags:
+        - carriers
+      summary: blabla
+      description: statistics something something
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: path
+          name: carrier_code
+          type: string
+          required: true
+          description: code of the carrier
+
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Statistics'
+
+#    post:
+#      operationId: carrier_post_statistics
+#      tags:
+#        - carriers
+#      summary: blabla
+#      description: Read lis of carriers for a given airport
+#      produces:
+#        - application/xml
+#        - application/json
+#      parameters:
+#        - in: path
+#          name: carrier_code
+#          type: string
+#          required: true
+#          description: code of the carrier
+#
+#      responses:
+#        200:
+#          description: OK
+#          schema:
+#            $ref: '#/definitions/Carriers'
+#
+#    put:
+#      operationId: carrier_put_statistics
+#      tags:
+#        - carriers
+#      summary: blabla
+#      description: Update statistics for carrier
+#      produces:
+#        - application/xml
+#        - application/json
+#      parameters:
+#        - in: path
+#          name: carrier_code
+#          type: string
+#          required: true
+#          description: code of the carrier
+#
+#      responses:
+#        200:
+#          description: OK
+#          schema:
+#            $ref: '#/definitions/Carriers'
+#
+#    delete:
+#      operationId: carrier_delete_statistics
+#      tags:
+#        - carriers
+#      summary: blabla
+#      description: Delete statistics for carrier.
+#      produces:
+#        - application/xml
+#        - application/json
+#      parameters:
+#        - in: path
+#          name: carrier_code
+#          type: string
+#          required: true
+#          description: code of the carrier
+#
+#      responses:
+#        200:
+#          description: OK
+#          schema:
+#            $ref: '#/definitions/Carriers'
+
+  /carriers/{carrier_code}/performance:
+    get:
+      operationId: airlines.carrier_performance
+      tags:
+        - carriers
+      summary: blabla
+      description: Retrieve performance stats for a carrier.
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: path
+          name: carrier_code
+          type: string
+          required: true
+          description: code of the carrier
+
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Flights'
+
+  /carriers/delays:
+    get:
+      operationId: airlines.carrier_delays
+      tags:
+        - carriers
+      summary: blabla
+      description: Get the delays for all carriers
+      produces:
+        - application/xml
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Delays'
+
+  /carriers/delays/statistics:
+    get:
+      operationId: airlines.carrier_delays_statistics
+      tags:
+        - carriers
+      summary: blabla
+      description: Returns descriptive statistics for a specific carrier or all carriers.
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: query
+          name: carrier_code
+          type: string
+          required: false
+          description: code of the carrier.
+
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Descriptive_statistics'
+
+
+definitions:
+  Airport:
+    type: object
+    properties:
+      code:
+        type: string
+      name:
+        type: string
+
+  Airports:
+    type: array
+    items:
+      $ref: '#/definitions/Airport'
+
+  Carrier:
+    type: object
+    properties:
+      code:
+        type: string
+      name:
+        type: string
+
+  Carriers:
+    type: array
+    items:
+      $ref: '#/definitions/Carrier'
+
+  Delays:
+    type: object
+    properties:
+      late_aircraft:
+        type: integer
+      weather:
+        type: integer
+      security:
+        type: integer
+      national_aviation_system:
+        type: integer
+      carrier:
+        type: integer
+
+  Flights:
+    type: object
+    properties:
+      cancelled:
+        type: integer
+      on_time:
+        type: integer
+      total:
+        type: integer
+      delayed:
+        type: integer
+      diverted:
+        type: integer
+
+  Minutes_delayed:
+    type: object
+    properties:
+      late_aircraft:
+        type: integer
+      weather:
+        type: integer
+      carrier:
+        type: integer
+      security:
+        type: integer
+      total:
+        type: integer
+      national_aviation_system:
+        type: integer
+
+  Statistics:
+    type: object
+    properties:
+      flights:
+        $ref: '#/definitions/Flights'
+      delays:
+        $ref: '#/definitions/Delays'
+      minutes_delayed:
+        $ref: '#/definitions/Minutes_delayed'
+
+  Time:
+    type: object
+    properties:
+      label:
+        type: string
+      year:
+        type: integer
+      month:
+        type: integer
+
+  Descriptive_statistics:
+    type: object
+    properties:
+      mean:
+        type: integer
+      median:
+        type: integer
+      std_dev:
+        type: integer
+
+
+
+
+
+
+
