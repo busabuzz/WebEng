@@ -15,13 +15,13 @@ basePath: /v1
 paths:
   /airports:
     get:
-      operationId: airlines.airports
+      operationId: app.get_airports
       tags:
         - airports
       summary: blabla
       description: Read the list of airports
       produces:
-        - application/xml
+        - text/csv
         - application/json
       parameters:
         - name: content_type
@@ -35,17 +35,27 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/Airports'
+          links:
+            GetOperatingCarriers:
+              operationId: app.get_airport_carriers
+              # or
+              # operationRef: '#/paths/~1users~1{userId}/get'
+              parameters:
+                airport_code: '$response.body#/id'
+              description: >
+                The `id` value returned in the response can be used as
+                the `userId` parameter in `GET /users/{userId}`.
 
 
   /airports/{airport_code}/carriers:
     get:
-      operationId: airlines.airport_carriers
+      operationId: app.get_airport_carriers
       tags:
         - airports
       summary: blabla
-      description: Read lis of carriers for a given airport
+      description: Read list of carriers for a given airport
       produces:
-        - application/xml
+        - text/csv
         - application/json
       parameters:
         - in: path
@@ -62,21 +72,14 @@ paths:
 
   /carriers:
     get:
-      operationId: airlines.carriers
+      operationId: app.get_carriers
       tags:
         - carriers
       summary: blabla
-      description: Read lis of carriers for a given airport
+      description: Returns list of all carriers operating in the USA.
       produces:
-        - application/xml
+        - text/csv
         - application/json
-      parameters:
-        - in: path
-          name: airport_code
-          type: string
-          required: true
-          description: code of the airport
-
       responses:
         200:
           description: OK
@@ -85,13 +88,13 @@ paths:
 
   /carriers/{carrier_code}/statistics:
     get:
-      operationId: airlines.carrier_get_statistics
+      operationId: app.get_statistics
       tags:
         - carriers
       summary: blabla
       description: statistics something something
       produces:
-        - application/xml
+        - text/csv
         - application/json
       parameters:
         - in: path
@@ -99,6 +102,16 @@ paths:
           type: string
           required: true
           description: code of the carrier
+        - in: query
+          name: month
+          type: integer
+          required: false
+          description: month
+        - in: query
+          name: airport
+          type: string
+          required: true
+          description: code of the airport
 
       responses:
         200:
@@ -107,13 +120,13 @@ paths:
             $ref: '#/definitions/Statistics'
 
 #    post:
-#      operationId: carrier_post_statistics
+#      operationId: app.post_statistics
 #      tags:
 #        - carriers
 #      summary: blabla
 #      description: Read lis of carriers for a given airport
 #      produces:
-#        - application/xml
+#        - text/csv
 #        - application/json
 #      parameters:
 #        - in: path
@@ -129,13 +142,13 @@ paths:
 #            $ref: '#/definitions/Carriers'
 #
 #    put:
-#      operationId: carrier_put_statistics
+#      operationId: app.put_statistics
 #      tags:
 #        - carriers
 #      summary: blabla
 #      description: Update statistics for carrier
 #      produces:
-#        - application/xml
+#        - text/csv
 #        - application/json
 #      parameters:
 #        - in: path
@@ -151,13 +164,13 @@ paths:
 #            $ref: '#/definitions/Carriers'
 #
 #    delete:
-#      operationId: carrier_delete_statistics
+#      operationId: app.delete_statistics
 #      tags:
 #        - carriers
 #      summary: blabla
 #      description: Delete statistics for carrier.
 #      produces:
-#        - application/xml
+#        - text/csv
 #        - application/json
 #      parameters:
 #        - in: path
@@ -172,15 +185,15 @@ paths:
 #          schema:
 #            $ref: '#/definitions/Carriers'
 
-  /carriers/{carrier_code}/performance:
+  /carriers/{carrier_code}/flights:
     get:
-      operationId: airlines.carrier_performance
+      operationId: app.get_flights
       tags:
         - carriers
       summary: blabla
       description: Retrieve performance stats for a carrier.
       produces:
-        - application/xml
+        - text/csv
         - application/json
       parameters:
         - in: path
@@ -188,6 +201,16 @@ paths:
           type: string
           required: true
           description: code of the carrier
+        - in: query
+          name: airport
+          type: string
+          required: true
+          description: code of the airport
+        - in: query
+          name: month
+          type: string
+          required: false
+          description: month
 
       responses:
         200:
@@ -197,14 +220,30 @@ paths:
 
   /carriers/delays:
     get:
-      operationId: airlines.carrier_delays
+      operationId: app.get_delays
       tags:
         - carriers
       summary: blabla
-      description: Get the delays for all carriers
+      description: Get delays in minutes per carrier.
       produces:
-        - application/xml
+        - text/csv
         - application/json
+      parameters:
+        - in: query
+          name: carrier_specific
+          type: boolean
+          required: false
+          description: carrier specific reasons/all reasons
+        - in: query
+          name: airport
+          type: string
+          required: false
+          description: code of the airport
+        - in: query
+          name: month
+          type: string
+          required: false
+          description: month
       responses:
         200:
           description: OK
@@ -213,20 +252,35 @@ paths:
 
   /carriers/delays/statistics:
     get:
-      operationId: airlines.carrier_delays_statistics
+      operationId: app.get_delay_statistics
       tags:
         - carriers
       summary: blabla
       description: Returns descriptive statistics for a specific carrier or all carriers.
       produces:
-        - application/xml
+        - text/csv
         - application/json
       parameters:
         - in: query
-          name: carrier_code
+          name: carrier
           type: string
           required: false
           description: code of the carrier.
+        - in: query
+          name: carrier_specific
+          type: boolean
+          required: false
+          description: carrier specific reasons/all reasons
+        - in: query
+          name: airport1
+          type: string
+          required: true
+          description: One of the two airports
+        - in: query
+          name: airport2
+          type: string
+          required: true
+          description: One of the two airports
 
       responses:
         200:
