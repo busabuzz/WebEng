@@ -1,23 +1,25 @@
-import connexion
-from airlines_api import orm
-import dicttoxml
-import flask
-import json
 import csv
+import json
+import flask_csv
+import connexion
+import flask
 
+from airlines_api import orm
 
 with open('airlines.json', 'r') as f:
     airlines = json.load(f)
 
 
 def serialize(data):
-    return flask.Response(dicttoxml.dicttoxml(data), connexion.request.content_type) if connexion.request.content_type == 'application/xml' else data
+    return data
 
 
 def get_airports():
     print(connexion.request.content_type)
     airport_list = [item['airport'] for item in airlines]
     airport_list = airport_list[0:10]
+    for item in airport_list:
+        item['links'] = [{'rel': "Get airport carriers", 'href': 'localhost:5000/airports/'+item['code']+'/carriers'}]
     return serialize(airport_list)
 
 
@@ -71,6 +73,7 @@ def get_delay_statistics(carrier_specific=None, airport=None, month=None):
 
 
 db_session = orm.init_db('sqlite:///:memory:')
+orm.load_db(db_session, airlines)
 
 
 app = connexion.App(__name__, specification_dir='./')

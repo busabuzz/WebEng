@@ -5,6 +5,6 @@ setup(
     version='0.1dev',
     packages=['airlines_api'],
     install_requires=[
-        'connexion', 'dicttoxml', 'flask', 'sqlalchemy'
+        'connexion', 'flask_csv', 'flask', 'sqlalchemy'
     ],
 )

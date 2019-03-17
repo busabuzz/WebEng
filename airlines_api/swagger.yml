@@ -35,17 +35,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/Airports'
-          links:
-            GetOperatingCarriers:
-              operationId: app.get_airport_carriers
-              # or
-              # operationRef: '#/paths/~1users~1{userId}/get'
-              parameters:
-                airport_code: '$response.body#/id'
-              description: >
-                The `id` value returned in the response can be used as
-                the `userId` parameter in `GET /users/{userId}`.
-
 
   /airports/{airport_code}/carriers:
     get:
@@ -290,6 +279,15 @@ paths:
 
 
 definitions:
+  Link:
+    type: object
+    properties:
+      rel:
+        type: string
+      href:
+        type: string
+        format: uri
+
   Airport:
     type: object
     properties:
@@ -297,6 +295,10 @@ definitions:
         type: string
       name:
         type: string
+      links:
+        type: array
+        items:
+          $ref: '#/definitions/Link'
 
   Airports:
     type: array
@@ -310,6 +312,10 @@ definitions:
         type: string
       name:
         type: string
+      links:
+        type: array
+        items:
+          $ref: '#/definitions/Link'
 
   Carriers:
     type: array
