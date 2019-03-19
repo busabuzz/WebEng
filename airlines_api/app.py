@@ -21,8 +21,7 @@ def get_airports():
     airport_list = [item['airport'] for item in airlines]
     airport_list = airport_list[0:10]
     for item in airport_list:
-        item['rel'] = "Get airport carriers"
-        item['href'] = 'localhost:5000/airports/'+item['code']+'/carriers'
+        item['links'] = [{'rel': "Get airport carriers", 'href': 'localhost:5000/airports/'+item['code']+'/carriers'}]
     return serialize(airport_list)
 
 
