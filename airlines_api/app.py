@@ -1,25 +1,28 @@
-import csv
 import json
-import flask_csv
 import connexion
 import flask
-
+import pandas
+from pandas.io.json import json_normalize
 from airlines_api import orm
 
 with open('airlines.json', 'r') as f:
     airlines = json.load(f)
 
 
+# serializes response data as json/csv depending on content-type in request header
 def serialize(data):
-    return data
+    if connexion.request.content_type == 'text/csv':
+        return flask.Response(pandas.io.json.json_normalize(data).to_csv(), content_type='text/csv')
+    else:
+        return data
 
 
 def get_airports():
-    print(connexion.request.content_type)
     airport_list = [item['airport'] for item in airlines]
     airport_list = airport_list[0:10]
     for item in airport_list:
-        item['links'] = [{'rel': "Get airport carriers", 'href': 'localhost:5000/airports/'+item['code']+'/carriers'}]
+        item['rel'] = "Get airport carriers"
+        item['href'] = 'localhost:5000/airports/'+item['code']+'/carriers'
     return serialize(airport_list)
 
 
@@ -72,8 +75,8 @@ def get_delay_statistics(carrier_specific=None, airport=None, month=None):
     return []
 
 
-db_session = orm.init_db('sqlite:///:memory:')
-orm.load_db(db_session, airlines)
+# db_session = orm.init_db('sqlite:///:memory:')
+# orm.load_db(db_session, airlines)
 
 
 app = connexion.App(__name__, specification_dir='./')
