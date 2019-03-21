@@ -220,7 +220,7 @@ paths:
       parameters:
         - in: query
           name: carrier_specific
-          type: boolean
+          type: string
           required: false
           description: carrier specific reasons/all reasons
         - in: query
@@ -230,7 +230,7 @@ paths:
           description: code of the airport
         - in: query
           name: month
-          type: string
+          type: integer
           required: false
           description: month
       responses:
@@ -257,7 +257,7 @@ paths:
           description: code of the carrier.
         - in: query
           name: carrier_specific
-          type: boolean
+          type: string
           required: false
           description: carrier specific reasons/all reasons
         - in: query
