@@ -9,10 +9,15 @@ from airlines_api import orm
 with open('airlines.json', 'r') as f:
 	airlines = json.load(f)
 
+HOST = 'localhost'
+PORT = 5000
+
 
 # serializes response data as json/csv depending on content-type in request header
 def serialize(data):
-	if connexion.request.content_type == 'text/csv':
+	ctype = connexion.request.accept_mimetypes
+	print(connexion.request.accept_mimetypes)
+	if 'text/csv' in ctype:
 		return flask.Response(pandas.io.json.json_normalize(data).to_csv(), content_type='text/csv')
 	else:
 		return data
@@ -28,7 +33,7 @@ def get_airports():
 				break
 		if in_data is False:
 			item['airport']['links'] = [
-				{'rel': "Get airport carriers", 'href': 'localhost:5000/v1/airports/' + item['airport']['code'] + '/carriers'}]
+				{'rel': "Get airport carriers", 'href': HOST + str(PORT) + '/v1/airports/' + item['airport']['code'] + '/carriers'}]
 			data.append(item['airport'])
 	return serialize(data)
 
@@ -172,4 +177,4 @@ app.add_api('swagger.yml')
 
 # If we're running in stand alone mode, run the application
 if __name__ == '__main__':
-	app.run(host='localhost', port=5000, debug=True)
+	app.run(host=HOST, port=PORT, debug=True)
