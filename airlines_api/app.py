@@ -19,11 +19,18 @@ def serialize(data):
 
 
 def get_airports():
-	airport_list = [item['airport'] for item in airlines]
-	for item in airport_list:
-		item['links'] = [
-			{'rel': "Get airport carriers", 'href': 'localhost:5000/airports/' + item['code'] + '/carriers'}]
-	return serialize(airport_list)
+	data = []
+	for item in airlines:
+		in_data = False
+		for i in data:
+			if i['code'] == item['airport']['code']:
+				in_data = True
+				break
+		if in_data is False:
+			item['airport']['links'] = [
+				{'rel': "Get airport carriers", 'href': 'localhost:5000/v1/airports/' + item['airport']['code'] + '/carriers'}]
+			data.append(item['airport'])
+	return serialize(data)
 
 
 def get_carriers():
