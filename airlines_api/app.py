@@ -20,7 +20,6 @@ def serialize(data):
 
 def get_airports():
     airport_list = [item['airport'] for item in airlines]
-    airport_list = airport_list[0:10]
     for item in airport_list:
         item['links'] = [{'rel': "Get airport carriers", 'href': 'localhost:5000/airports/'+item['code']+'/carriers'}]
     return serialize(airport_list)
@@ -31,8 +30,6 @@ def get_carriers():
     for item in airlines:
         if item not in data:
             data.append(item['carrier'])
-            if len(data) > 9:
-                break
     return serialize(data)
 
 
@@ -41,9 +38,6 @@ def get_airport_carriers(airport_code):
     for item in airlines:
         if item['airport']['code'] == airport_code:
             data.append(item['carrier'])
-            if len(data) > 9:
-                break
-
     return serialize(data)
 
 
@@ -51,32 +45,48 @@ def get_statistics(carrier_code, airport, month=None):
 	data = []
 	for item in airlines:
 		if item['carrier']['code'] == carrier_code:
-			if item ['airport']['code'] == airport:
-				if item ['time']['month'] == month:
+			if item['airport']['code'] == airport:
+				if item['time']['month'] == month:
 					data.append(item['statistics'])
 				elif month is None:
 					data.append(item['statistics'])
 	return serialize(data)
 
 
-def post_statistics(carrier_code):
-    return []
+def post_statistics(request_body):
+	#add new entry
+	airlines.append(request_body)
+	return []
+
+#maybe change month to required here
+def put_statistics(carrier_code, airport, request_body, month=None):
+	for item in airlines:
+		if item['carrier']['code'] == carrier_code:
+			if item['airport']['code'] == airport:
+				if item['time']['month'] == month:
+					item = request_body
+				elif month is None:
+					item = request_body
+	return []
 
 
-def put_statistics(carrier_code):
-    return []
-
-
-def delete_statistics(carrier_code):
-    return []
+def delete_statistics(carrier_code, airport, month=None):
+	for item in airlines:
+		if item['carrier']['code'] == carrier_code:
+			if item['airport']['code'] == airport:
+				if item['time']['month'] == month:
+					del item
+				elif month is None:
+					del item
+	return []
 
 
 def get_flights(carrier_code, airport, month=None):
 	data = []
 	for item in airlines:
 		if item['carrier']['code'] == carrier_code:
-			if item ['airport']['code'] == airport:
-				if item ['time']['month'] == month:
+			if item['airport']['code'] == airport:
+				if item['time']['month'] == month:
 					data.append(item['statistics']['flights'])
 				elif month is None:
 					data.append(item['statistics']['flights'])
