@@ -23,12 +23,6 @@ paths:
       produces:
         - text/csv
         - application/json
-      parameters:
-        - name: content_type
-          in: query
-          description: json/xml
-          required: false
-          type: string
 
       responses:
         200:
@@ -75,19 +69,19 @@ paths:
           schema:
             $ref: '#/definitions/Carriers'
 
-  /carriers/{carrier_code}/statistics:
+  /statistics:
     get:
       operationId: app.get_statistics
       tags:
-        - carriers
+        - statistics
       summary: blabla
       description: statistics something something
       produces:
         - text/csv
         - application/json
       parameters:
-        - in: path
-          name: carrier_code
+        - in: query
+          name: carrier
           type: string
           required: true
           description: code of the carrier
@@ -108,27 +102,26 @@ paths:
           schema:
             $ref: '#/definitions/Statistics'
 
-#    post:
-#      operationId: app.post_statistics
-#      tags:
-#        - carriers
-#      summary: blabla
-#      description: Read lis of carriers for a given airport
-#      produces:
-#        - text/csv
-#        - application/json
-#      parameters:
-#        - in: path
-#          name: carrier_code
-#          type: string
-#          required: true
-#          description: code of the carrier
-#
-#      responses:
-#        200:
-#          description: OK
-#          schema:
-#            $ref: '#/definitions/Carriers'
+    post:
+      operationId: app.post_statistics
+      tags:
+        - statistics
+      summary: blabla
+      description: Read lis of carriers for a given airport
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: carrier_code
+          type: string
+          required: true
+          description: code of the carrier
+
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Carriers'
 #
 #    put:
 #      operationId: app.put_statistics
@@ -174,11 +167,11 @@ paths:
 #          schema:
 #            $ref: '#/definitions/Carriers'
 
-  /carriers/{carrier_code}/flights:
+  /statistics/flights:
     get:
       operationId: app.get_flights
       tags:
-        - carriers
+        - statistics
       summary: blabla
       description: Retrieve performance stats for a carrier.
       produces:
@@ -207,11 +200,11 @@ paths:
           schema:
             $ref: '#/definitions/Flights'
 
-  /carriers/delays:
+  /statistics/delays:
     get:
       operationId: app.get_delays
       tags:
-        - carriers
+        - statistics
       summary: blabla
       description: Get delays in minutes per carrier.
       produces:
@@ -239,11 +232,11 @@ paths:
           schema:
             $ref: '#/definitions/Delays'
 
-  /carriers/delays/statistics:
+  /statistics/descriptive:
     get:
       operationId: app.get_delay_statistics
       tags:
-        - carriers
+        - statistics
       summary: blabla
       description: Returns descriptive statistics for a specific carrier or all carriers.
       produces:
