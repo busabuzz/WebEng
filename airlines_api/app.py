@@ -15,9 +15,7 @@ PORT = 5000
 
 # serializes response data as json/csv depending on content-type in request header
 def serialize(data):
-	ctype = connexion.request.accept_mimetypes
-	print(connexion.request.accept_mimetypes)
-	if 'text/csv' in ctype:
+	if 'text/csv' in connexion.request.accept_mimetypes:
 		return flask.Response(pandas.io.json.json_normalize(data).to_csv(), content_type='text/csv')
 	else:
 		return data
@@ -60,10 +58,10 @@ def get_airport_carriers(airport_code):
 	return serialize(data)
 
 
-def get_statistics(carrier_code, airport, month=None):
+def get_statistics(carrier, airport, month=None):
 	data = []
 	for item in airlines:
-		if item['carrier']['code'] == carrier_code:
+		if item['carrier']['code'] == carrier:
 			if item['airport']['code'] == airport:
 				if item['time']['month'] == month:
 					data.append(item['statistics'])
@@ -75,7 +73,7 @@ def get_statistics(carrier_code, airport, month=None):
 def post_statistics(request_body):
 	# add new entry
 	airlines.append(request_body)
-	return []
+	return {}, 200
 
 
 # maybe change month to required here
