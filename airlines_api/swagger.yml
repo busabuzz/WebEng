@@ -111,61 +111,54 @@ paths:
       consumes:
         - application/json
       parameters:
-        - in: path
-          name: carrier_code
-          type: string
+        - in: body
+          name: request_body
+          description: data entry to be updated.
           required: true
-          description: code of the carrier
+          schema:
+            $ref: '#/definitions/Statistics'
 
       responses:
         200:
           description: OK
+
+    put:
+      operationId: app.put_statistics
+      tags:
+        - statistics
+      summary: Updates the statistics for a given carrier, airport and time in the request body.
+      description: Update statistics for carrier
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: request_body
+          description: data entry to be updated.
+          required: true
           schema:
-            $ref: '#/definitions/Carriers'
-#
-#    put:
-#      operationId: app.put_statistics
-#      tags:
-#        - carriers
-#      summary: blabla
-#      description: Update statistics for carrier
-#      produces:
-#        - text/csv
-#        - application/json
-#      parameters:
-#        - in: path
-#          name: carrier_code
-#          type: string
-#          required: true
-#          description: code of the carrier
-#
-#      responses:
-#        200:
-#          description: OK
-#          schema:
-#            $ref: '#/definitions/Carriers'
-#
-#    delete:
-#      operationId: app.delete_statistics
-#      tags:
-#        - carriers
-#      summary: blabla
-#      description: Delete statistics for carrier.
-#      produces:
-#        - text/csv
-#        - application/json
-#      parameters:
-#        - in: path
-#          name: carrier_code
-#          type: string
-#          required: true
-#          description: code of the carrier
-#
-#      responses:
-#        200:
-#          description: OK
-#          schema:
-#            $ref: '#/definitions/Carriers'
+            $ref: '#/definitions/Statistics'
+      responses:
+        200:
+          description: OK
+
+    delete:
+      operationId: app.delete_statistics
+      tags:
+        - statistics
+      summary: Deletes the entry corresponding to the carrier, airport and time.
+      description: Delete entry.
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: request_body
+          description: data entry to be updated.
+          required: true
+          schema:
+            $ref: '#/definitions/Statistics'
+      responses:
+        200:
+          description: OK
 
   /statistics/flights:
     get:

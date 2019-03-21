@@ -13,7 +13,7 @@ HOST = 'localhost'
 PORT = 5000
 
 
-# serializes response data as json/csv depending on content-type in request header
+# serializes response data as json/csv depending on mime_type in request header
 def serialize(data):
 	if 'text/csv' in connexion.request.accept_mimetypes:
 		return flask.Response(pandas.io.json.json_normalize(data).to_csv(), content_type='text/csv')
@@ -77,26 +77,25 @@ def post_statistics(request_body):
 
 
 # maybe change month to required here
-def put_statistics(carrier_code, airport, request_body, month=None):
+def put_statistics(request_body):
 	for item in airlines:
-		if item['carrier']['code'] == carrier_code:
-			if item['airport']['code'] == airport:
-				if item['time']['month'] == month:
-					item = request_body
-				elif month is None:
-					item = request_body
-	return []
+		if item['carrier']['code'] == request_body['carrier']['code']:
+			if item['airport']['code'] == request_body['airport']['code']:
+				if item['time']['label'] == request_body['time']['label']:
+					item['statistics'] = request_body['statistics']
+					break
+
+	return {}, 200
 
 
-def delete_statistics(carrier_code, airport, month=None):
+def delete_statistics(request_body):
 	for item in airlines:
-		if item['carrier']['code'] == carrier_code:
-			if item['airport']['code'] == airport:
-				if item['time']['month'] == month:
+		if item['carrier']['code'] == request_body['carrier']['code']:
+			if item['airport']['code'] == request_body['airport']['code']:
+				if item['time']['label'] == request_body['time']['label']:
 					del item
-				elif month is None:
-					del item
-	return []
+					break
+	return {}, 200
 
 
 def get_flights(carrier_code, airport, month=None):
@@ -164,15 +163,8 @@ def get_delay_statistics(airport1, airport2, carrier_code=None, carrier_specific
 	return serialize(data)
 
 
-# db_session = orm.init_db('sqlite:///:memory:')
-# orm.load_db(db_session, airlines)
-
-
 app = connexion.App(__name__, specification_dir='./')
-
-# Read the swagger.yml file to configure the endpoints
 app.add_api('swagger.yml')
 
-# If we're running in stand alone mode, run the application
 if __name__ == '__main__':
 	app.run(host=HOST, port=PORT, debug=True)
