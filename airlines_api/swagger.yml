@@ -178,7 +178,7 @@ paths:
         - text/csv
         - application/json
       parameters:
-        - in: path
+        - in: query
           name: carrier_code
           type: string
           required: true

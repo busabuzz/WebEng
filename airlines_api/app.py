@@ -7,38 +7,45 @@ from pandas.io.json import json_normalize
 from airlines_api import orm
 
 with open('airlines.json', 'r') as f:
-    airlines = json.load(f)
+	airlines = json.load(f)
 
 
 # serializes response data as json/csv depending on content-type in request header
 def serialize(data):
-    if connexion.request.content_type == 'text/csv':
-        return flask.Response(pandas.io.json.json_normalize(data).to_csv(), content_type='text/csv')
-    else:
-        return data
+	if connexion.request.content_type == 'text/csv':
+		return flask.Response(pandas.io.json.json_normalize(data).to_csv(), content_type='text/csv')
+	else:
+		return data
 
 
 def get_airports():
-    airport_list = [item['airport'] for item in airlines]
-    for item in airport_list:
-        item['links'] = [{'rel': "Get airport carriers", 'href': 'localhost:5000/airports/'+item['code']+'/carriers'}]
-    return serialize(airport_list)
+	airport_list = [item['airport'] for item in airlines]
+	for item in airport_list:
+		item['links'] = [
+			{'rel': "Get airport carriers", 'href': 'localhost:5000/airports/' + item['code'] + '/carriers'}]
+	return serialize(airport_list)
 
 
 def get_carriers():
-    data = []
-    for item in airlines:
-        if item not in data:
-            data.append(item['carrier'])
-    return serialize(data)
+	data = []
+	for item in airlines:
+		in_data = False
+		for i in data:
+			if i['code'] == item['carrier']['code']:
+				in_data = True
+				break
+		if in_data is False:
+			data.append(item['carrier'])
+
+	return serialize(data)
 
 
 def get_airport_carriers(airport_code):
-    data = []
-    for item in airlines:
-        if item['airport']['code'] == airport_code:
-            data.append(item['carrier'])
-    return serialize(data)
+	data = []
+	for item in airlines:
+		if item['airport']['code'] == airport_code:
+			data.append(item['carrier'])
+	return serialize(data)
 
 
 def get_statistics(carrier_code, airport, month=None):
@@ -54,11 +61,12 @@ def get_statistics(carrier_code, airport, month=None):
 
 
 def post_statistics(request_body):
-	#add new entry
+	# add new entry
 	airlines.append(request_body)
 	return []
 
-#maybe change month to required here
+
+# maybe change month to required here
 def put_statistics(carrier_code, airport, request_body, month=None):
 	for item in airlines:
 		if item['carrier']['code'] == carrier_code:
@@ -118,7 +126,7 @@ def get_delays(carrier_specific=None, airport=None, month=None):
 					data.append(item['statistics']['minutes delayed'])
 				else:
 					data.append(item['statistics']['minutes delayed'][carrier_specific])
-	
+
 	return serialize(data)
 
 
@@ -140,9 +148,9 @@ def get_delay_statistics(airport1, airport2, carrier_code=None, carrier_specific
 	mean = statistics.mean(list)
 	median = statistics.median(list)
 	std = statistics.stdev(list)
-	
-	data = {"mean":mean,"median":median,"standard deviation":std}
-				
+
+	data = {"mean": mean, "median": median, "standard deviation": std}
+
 	return serialize(data)
 
 
@@ -152,12 +160,9 @@ def get_delay_statistics(airport1, airport2, carrier_code=None, carrier_specific
 
 app = connexion.App(__name__, specification_dir='./')
 
-
 # Read the swagger.yml file to configure the endpoints
 app.add_api('swagger.yml')
 
-
 # If we're running in stand alone mode, run the application
 if __name__ == '__main__':
-    app.run(host='localhost', port=5000, debug=True)
-
+	app.run(host='localhost', port=5000, debug=True)
