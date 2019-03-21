@@ -2,6 +2,7 @@ import json
 import connexion
 import flask
 import pandas
+import statistics
 from pandas.io.json import json_normalize
 from airlines_api import orm
 
@@ -53,7 +54,7 @@ def get_statistics(carrier_code, airport, month=None):
 			if item ['airport']['code'] == airport:
 				if item ['time']['month'] == month:
 					data.append(item['statistics'])
-				elif month == None:
+				elif month is None:
 					data.append(item['statistics'])
 	return serialize(data)
 
@@ -77,7 +78,7 @@ def get_flights(carrier_code, airport, month=None):
 			if item ['airport']['code'] == airport:
 				if item ['time']['month'] == month:
 					data.append(item['statistics']['flights'])
-				elif month == None:
+				elif month is None:
 					data.append(item['statistics']['flights'])
 	return serialize(data)
 
@@ -87,23 +88,23 @@ def get_delays(carrier_specific=None, airport=None, month=None):
 	for item in airlines:
 		if item['airport']['code'] == airport:
 			if item['time']['month'] == month:
-				if carrier_specific == None:
+				if carrier_specific is None:
 					data.append(item['statistics']['minutes delayed'])
 				else:
 					data.append(item['statistics']['minutes delayed'][carrier_specific])
-			elif month == None:
-				if carrier_specific == None:
+			elif month is None:
+				if carrier_specific is None:
 					data.append(item['statistics']['minutes delayed'])
 				else:
 					data.append(item['statistics']['minutes delayed'][carrier_specific])
-		elif airport == None:
+		elif airport is None:
 			if item['time']['month'] == month:
-				if carrier_specific == None:
+				if carrier_specific is None:
 					data.append(item['statistics']['minutes delayed'])
 				else:
 					data.append(item['statistics']['minutes delayed'][carrier_specific])
-			elif month == None:
-				if carrier_specific == None:
+			elif month is None:
+				if carrier_specific is None:
 					data.append(item['statistics']['minutes delayed'])
 				else:
 					data.append(item['statistics']['minutes delayed'][carrier_specific])
@@ -112,37 +113,27 @@ def get_delays(carrier_specific=None, airport=None, month=None):
 
 
 def get_delay_statistics(airport1, airport2, carrier_code=None, carrier_specific=None):
-	data1 = []
-	data2 = []
-	innerdata1 = []
-	innerdata2 = []
+	data = []
+	list = []
 	for item in airlines:
 		if item['carrier']['code'] == carrier_code:
 			if item['airport']['code'] == airport1:
-				innerdata1.append(item['carrier'])
-				innerdata1.append(item['statistics']['# of delays'][carrier_specific])
-				data1.append(innerdata1)
+				list.append(item['statistics']['# of delays'][carrier_specific])
 			if item['airport']['code'] == airport2:
-				innderdata2.append(item['carrier'])
-				innderdata2.append(item['statistics']['# of delays'][carrier_specific])
-				data2.append(innerdata1)
-		elif carrier_code == None:
+				list.append(item['statistics']['# of delays'][carrier_specific])
+		elif carrier_code is None:
 			if item['airport']['code'] == airport1:
-				innerdata1.append(item['carrier'])
-				innerdata1.append(item['statistics']['# of delays'][carrier_specific])
-				data1.append(innerdata1)
+				list.append(item['statistics']['# of delays'][carrier_specific])
 			if item['airport']['code'] == airport2:
-				innerdata2.append(item['carrier'])
-				innerdata2.append(item['statistics']['# of delays'][carrier_specific])
-				data2.append(innerdata2)
+				list.append(item['statistics']['# of delays'][carrier_specific])
+
+	mean = statistics.mean(list)
+	median = statistics.median(list)
+	std = statistics.stdev(list)
 	
-	# Data1 and data2 now hold a json object with a string and a integer
-	# Extract the integer from both objects and calculate mean, medium and std dev.
-	# mean(data1[carrier_specific],data2[carrier_specific])
-	# medium(data1[carrier_specific],data2[carrier_specific])
-	# std(data1[carrier_specific],data2[carrier_specific])
-	# add this to a new json object.
-	return serialize(data1)
+	data = {"mean":mean,"median":median,"standard deviation":std}
+				
+	return serialize(data)
 
 
 # db_session = orm.init_db('sqlite:///:memory:')

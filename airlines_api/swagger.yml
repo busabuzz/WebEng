@@ -197,7 +197,7 @@ paths:
           description: code of the airport
         - in: query
           name: month
-          type: string
+          type: integer
           required: false
           description: month
 
