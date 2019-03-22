@@ -86,15 +86,20 @@ paths:
           required: true
           description: code of the carrier
         - in: query
-          name: month
-          type: integer
-          required: false
-          description: month
-        - in: query
           name: airport
           type: string
           required: true
           description: code of the airport
+        - in: query
+          name: year
+          type: integer
+          required: false
+          description: year
+        - in: query
+          name: month
+          type: integer
+          required: false
+          description: month
 
       responses:
         200:
@@ -150,12 +155,26 @@ paths:
       consumes:
         - application/json
       parameters:
-        - in: body
-          name: request_body
-          description: data entry to be updated.
+        - in: query
+          name: airport
+          type: string
+          description: airport code
           required: true
-          schema:
-            $ref: '#/definitions/Statistics'
+        - in: query
+          name: carrier
+          type: string
+          description: carrier code
+          required: true
+        - in: query
+          name: month
+          type: integer
+          description: month
+          required: false
+        - in: query
+          name: year
+          type: integer
+          description: year
+          required: false
       responses:
         200:
           description: OK
