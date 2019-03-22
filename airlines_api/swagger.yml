@@ -18,8 +18,8 @@ paths:
       operationId: app.get_airports
       tags:
         - airports
-      summary: blabla
-      description: Read the list of airports
+      summary: Get list of all airports.
+      description: Returns a list of all the airports.
       produces:
         - text/csv
         - application/json
@@ -35,8 +35,8 @@ paths:
       operationId: app.get_airport_carriers
       tags:
         - airports
-      summary: blabla
-      description: Read list of carriers for a given airport
+      summary: Get all carriers on a specific airport.
+      description: Returns a list of all carriers operating on a given airport.
       produces:
         - text/csv
         - application/json
@@ -58,7 +58,7 @@ paths:
       operationId: app.get_carriers
       tags:
         - carriers
-      summary: blabla
+      summary: Get a list of all carriers.
       description: Returns list of all carriers operating in the USA.
       produces:
         - text/csv
@@ -74,8 +74,8 @@ paths:
       operationId: app.get_statistics
       tags:
         - statistics
-      summary: blabla
-      description: statistics something something
+      summary: Get all statistics for a given carrier.
+      description: Returns a list of carrier statistics depending on parameters.
       produces:
         - text/csv
         - application/json
@@ -106,8 +106,8 @@ paths:
       operationId: app.post_statistics
       tags:
         - statistics
-      summary: blabla
-      description: Read lis of carriers for a given airport
+      summary: Post a new carrier statistic into the database.
+      description: Adds a new carrier statistic entry into the database.
       consumes:
         - application/json
       parameters:
@@ -127,7 +127,7 @@ paths:
       tags:
         - statistics
       summary: Updates the statistics for a given carrier, airport and time in the request body.
-      description: Update statistics for carrier
+      description: Update statistics for carrier.
       consumes:
         - application/json
       parameters:
@@ -165,7 +165,7 @@ paths:
       operationId: app.get_flights
       tags:
         - statistics
-      summary: blabla
+      summary: Get flight statistic for a given carrier.
       description: Retrieve performance stats for a carrier.
       produces:
         - text/csv
@@ -198,8 +198,8 @@ paths:
       operationId: app.get_delays
       tags:
         - statistics
-      summary: blabla
-      description: Get delays in minutes per carrier.
+      summary: Get delays in minutes per carrier.
+      description: Returns a list of carrier specific delays per minute.
       produces:
         - text/csv
         - application/json
@@ -230,8 +230,8 @@ paths:
       operationId: app.get_delay_statistics
       tags:
         - statistics
-      summary: blabla
-      description: Returns descriptive statistics for a specific carrier or all carriers.
+      summary: Get descriptive statistics for two airports.
+      description: Returns descriptive statistics; mean, median and standard deviation. For two airports with a carrier specific reason, for all or a certain carrier.
       produces:
         - text/csv
         - application/json
