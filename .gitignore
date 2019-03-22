@@ -3,3 +3,4 @@ static/
 templates/
 .idea/
 __pycache_/
+airlines_api/__pycache__
