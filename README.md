@@ -4,7 +4,7 @@ Created by Bas de Walle and Emiel Ruchti
 
 ## Code
 
-The API is written in python and uses the flask framework.  
+The API is written in python and uses connexion on top of the flask framework.  
 To help documentation we used connexion[swagger-ui].
 
 ## Installation
