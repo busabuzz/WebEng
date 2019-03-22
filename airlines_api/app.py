@@ -99,7 +99,7 @@ def delete_statistics(airport, carrier, year=None, month=None):
 	return {}, 200
 
 
-def get_flights(carrier_code, airport, month=None):
+def get_flights(carrier_code, airport, year=None, month=None):
 	data = []
 	for item in airlines:
 		if item['carrier']['code'] == carrier_code:
@@ -109,43 +109,24 @@ def get_flights(carrier_code, airport, month=None):
 				elif month is None:
 					data.append(item['statistics']['flights'])
 	return serialize(data)
+	# TODO
 
 
-def get_delays(carrier_specific=None, airport=None, month=None):
+def get_delays(reasons=None, airport=None, year=None, month=None):
 	data = []
-	innerdata = {}
 	for item in airlines:
-		innerdata["carrier"] = item['carrier']
-		if item['airport']['code'] == airport:
-			if item['time']['month'] == month:
-				if carrier_specific is None:
-					innerdata["delays"] = (item['statistics']['minutes delayed'])
-					data.append(innerdata)
-				else:
-					innerdata["delays"] = (item['statistics']['minutes delayed'][carrier_specific])
-					data.append(innerdata)
-			elif month is None:
-				if carrier_specific is None:
-					innerdata["delays"] = (item['statistics']['minutes delayed'])
-					data.append(innerdata)
-				else:
-					innerdata["delays"] = (item['statistics']['minutes delayed'][carrier_specific])
-					data.append(innerdata)
-		elif airport is None:
-			if item['time']['month'] == month:
-				if carrier_specific is None:
-					innerdata["delays"] = (item['statistics']['minutes delayed'])
-					data.append(innerdata)
-				else:
-					innerdata["delays"] = (item['statistics']['minutes delayed'][carrier_specific])
-					data.append(innerdata)
-			elif month is None:
-				if carrier_specific is None:
-					innerdata["delays"] = (item['statistics']['minutes delayed'])
-					data.append(innerdata)
-				else:
-					innerdata["delays"] = (item['statistics']['minutes delayed'][carrier_specific])
-		innerdata = {}
+		innerdata = {"carrier": item['carrier'], "delays": {}}
+		if item['airport']['code'] == airport or airport is None:
+			if item['time']['year'] == year or year is None:
+				if item['time']['month'] == month or month is None:
+					if reasons is None:
+						innerdata['delays'] = (item['statistics']['minutes delayed'])
+						data.append(innerdata)
+					else:
+						for reason in reasons:
+							innerdata['delays'][reason] = item['statistics']['minutes delayed'][reason]
+						data.append(innerdata)
+
 	return serialize(data)
 
 

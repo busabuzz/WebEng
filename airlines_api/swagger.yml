@@ -224,15 +224,22 @@ paths:
         - application/json
       parameters:
         - in: query
-          name: carrier_specific
-          type: string
-          required: false
-          description: carrier specific reasons/all reasons
-        - in: query
           name: airport
           type: string
           required: false
           description: code of the airport
+        - in: query
+          name: reasons
+          type: array
+          items:
+            type: string
+          required: false
+          description: list of reasons, default is all reasons
+        - in: query
+          name: year
+          type: integer
+          required: false
+          description: year
         - in: query
           name: month
           type: integer
@@ -256,16 +263,6 @@ paths:
         - application/json
       parameters:
         - in: query
-          name: carrier
-          type: string
-          required: false
-          description: code of the carrier.
-        - in: query
-          name: carrier_specific
-          type: string
-          required: false
-          description: carrier specific reasons/all reasons
-        - in: query
           name: airport1
           type: string
           required: true
@@ -275,6 +272,19 @@ paths:
           type: string
           required: true
           description: One of the two airports
+        - in: query
+          name: carrier_code
+          type: string
+          required: false
+          description: code of the carrier.
+        - in: query
+          name: carrier_specific
+          type: array
+          items:
+            type: string
+          required: false
+          description: reason/all reasons
+
 
       responses:
         200:
