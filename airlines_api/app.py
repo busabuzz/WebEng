@@ -58,15 +58,15 @@ def get_airport_carriers(airport_code):
 	return serialize(data)
 
 
-def get_statistics(carrier, airport, month=None):
+def get_statistics(carrier, airport, month=None, year=None):
 	data = []
 	for item in airlines:
 		if item['carrier']['code'] == carrier:
 			if item['airport']['code'] == airport:
-				if item['time']['month'] == month:
-					data.append(item['statistics'])
-				elif month is None:
-					data.append(item['statistics'])
+				if item['time']['month'] == month or month is None:
+					if item['time']['year'] == year or year is None:
+						data.append(item['statistics'])
+
 	return serialize(data)
 
 
@@ -83,18 +83,19 @@ def put_statistics(request_body):
 			if item['airport']['code'] == request_body['airport']['code']:
 				if item['time']['label'] == request_body['time']['label']:
 					item['statistics'] = request_body['statistics']
-					break
+					return {}, 200
 
-	return {}, 200
+	return {"error": "entry does not exist"}, 404
 
 
-def delete_statistics(request_body):
+def delete_statistics(airport, carrier, year=None, month=None):
 	for item in airlines:
-		if item['carrier']['code'] == request_body['carrier']['code']:
-			if item['airport']['code'] == request_body['airport']['code']:
-				if item['time']['label'] == request_body['time']['label']:
-					del item
-					break
+		if item['carrier']['code'] == carrier:
+			if item['airport']['code'] == airport:
+				if item['time']['year'] == year or year is None:
+					if item['time']['month'] == month or month is None:
+						airlines[:] = [tup for tup in airlines if tup is not item]
+
 	return {}, 200
 
 
