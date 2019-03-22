@@ -21,9 +21,8 @@ paths:
       summary: Get list of all airports.
       description: Returns a list of all the airports.
       produces:
-        - text/csv
         - application/json
-
+        - text/csv
       responses:
         200:
           description: OK
@@ -38,8 +37,8 @@ paths:
       summary: Get all carriers on a specific airport.
       description: Returns a list of all carriers operating on a given airport.
       produces:
-        - text/csv
         - application/json
+        - text/csv
       parameters:
         - in: path
           name: airport_code
@@ -61,8 +60,8 @@ paths:
       summary: Get a list of all carriers.
       description: Returns list of all carriers operating in the USA.
       produces:
-        - text/csv
         - application/json
+        - text/csv
       responses:
         200:
           description: OK
@@ -77,8 +76,8 @@ paths:
       summary: Get all statistics for a given carrier.
       description: Returns a list of carrier statistics depending on parameters.
       produces:
-        - text/csv
         - application/json
+        - text/csv
       parameters:
         - in: query
           name: carrier
@@ -187,8 +186,8 @@ paths:
       summary: Get flight statistic for a given carrier.
       description: Retrieve performance stats for a carrier.
       produces:
-        - text/csv
         - application/json
+        - text/csv
       parameters:
         - in: query
           name: carrier_code
@@ -220,8 +219,8 @@ paths:
       summary: Get delays in minutes per carrier.
       description: Returns a list of carrier specific delays per minute.
       produces:
-        - text/csv
         - application/json
+        - text/csv
       parameters:
         - in: query
           name: airport
@@ -259,8 +258,8 @@ paths:
       summary: Get descriptive statistics for two airports.
       description: Returns descriptive statistics; mean, median and standard deviation. For two airports with a carrier specific reason, for all or a certain carrier.
       produces:
-        - text/csv
         - application/json
+        - text/csv
       parameters:
         - in: query
           name: airport1
