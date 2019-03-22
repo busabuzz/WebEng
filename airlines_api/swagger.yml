@@ -223,7 +223,7 @@ paths:
         200:
           description: OK
           schema:
-            $ref: '#/definitions/Delays'
+            $ref: '#/definitions/Carrier_delays'
 
   /statistics/descriptive:
     get:
@@ -307,6 +307,14 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/Carrier'
+
+  Carrier_delays:
+    type: object
+    properties:
+      carrier:
+        $ref: '#/definitions/Carrier'
+      delays:
+        $ref: '#/definitions/Delays'
 
   Delays:
     type: object

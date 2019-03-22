@@ -112,30 +112,39 @@ def get_flights(carrier_code, airport, month=None):
 
 def get_delays(carrier_specific=None, airport=None, month=None):
 	data = []
+	innerdata = {}
 	for item in airlines:
+		innerdata["carrier"] = item['carrier']
 		if item['airport']['code'] == airport:
 			if item['time']['month'] == month:
 				if carrier_specific is None:
-					data.append(item['statistics']['minutes delayed'])
+					innerdata["delays"] = (item['statistics']['minutes delayed'])
+					data.append(innerdata)
 				else:
-					data.append(item['statistics']['minutes delayed'][carrier_specific])
+					innerdata["delays"] = (item['statistics']['minutes delayed'][carrier_specific])
+					data.append(innerdata)
 			elif month is None:
 				if carrier_specific is None:
-					data.append(item['statistics']['minutes delayed'])
+					innerdata["delays"] = (item['statistics']['minutes delayed'])
+					data.append(innerdata)
 				else:
-					data.append(item['statistics']['minutes delayed'][carrier_specific])
+					innerdata["delays"] = (item['statistics']['minutes delayed'][carrier_specific])
+					data.append(innerdata)
 		elif airport is None:
 			if item['time']['month'] == month:
 				if carrier_specific is None:
-					data.append(item['statistics']['minutes delayed'])
+					innerdata["delays"] = (item['statistics']['minutes delayed'])
+					data.append(innerdata)
 				else:
-					data.append(item['statistics']['minutes delayed'][carrier_specific])
+					innerdata["delays"] = (item['statistics']['minutes delayed'][carrier_specific])
+					data.append(innerdata)
 			elif month is None:
 				if carrier_specific is None:
-					data.append(item['statistics']['minutes delayed'])
+					innerdata["delays"] = (item['statistics']['minutes delayed'])
+					data.append(innerdata)
 				else:
-					data.append(item['statistics']['minutes delayed'][carrier_specific])
-
+					innerdata["delays"] = (item['statistics']['minutes delayed'][carrier_specific])
+		innerdata = {}
 	return serialize(data)
 
 
