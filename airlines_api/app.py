@@ -4,7 +4,6 @@ import flask
 import pandas
 import statistics
 from pandas.io.json import json_normalize
-from airlines_api import orm
 
 with open('airlines.json', 'r') as f:
 	airlines = json.load(f)
@@ -53,7 +52,7 @@ def get_carriers():
 def get_airport_carriers(airport_code):
 	data = []
 	for item in airlines:
-		if item['airport']['code'] == airport_code:
+		if item['airport']['code'] == airport_code and airport_code not in data:
 			data.append(item['carrier'])
 	return serialize(data)
 
@@ -100,58 +99,97 @@ def delete_statistics(airport, carrier, year=None, month=None):
 
 
 def get_flights(carrier_code, airport, year=None, month=None):
-	data = []
+	data = dict.fromkeys(airlines[0]['statistics']['flights'].keys(), 0)
+
 	for item in airlines:
 		if item['carrier']['code'] == carrier_code:
 			if item['airport']['code'] == airport:
-				if item['time']['month'] == month:
-					data.append(item['statistics']['flights'])
-				elif month is None:
-					data.append(item['statistics']['flights'])
+				if item['time']['month'] == month or month is None:
+					if item['time']['year'] == year or year is None:
+						for key in data.keys():
+							data[key] += item['statistics']['flights'][key]
 	return serialize(data)
-	# TODO
 
 
 def get_delays(reasons=None, airport=None, year=None, month=None):
-	data = []
+	data = {}
+	carriers = []
+	response = []
 	for item in airlines:
-		innerdata = {"carrier": item['carrier'], "delays": {}}
-		if item['airport']['code'] == airport or airport is None:
-			if item['time']['year'] == year or year is None:
-				if item['time']['month'] == month or month is None:
+		if item['carrier']['code'] not in carriers:
+			carriers.append(item['carrier']['code'])
+
+	for carr in carriers:
+		data[carr] = 0
+
+	for item in airlines:
+		if airport is None or airport == item['airport']['code']:
+			if month is None or month == item['time']['month']:
+				if year is None or year == item['time']['year']:
 					if reasons is None:
-						innerdata['delays'] = (item['statistics']['minutes delayed'])
-						data.append(innerdata)
+						for key, value in item['statistics']['minutes delayed'].items():
+							data[item['carrier']['code']] += value
 					else:
 						for reason in reasons:
-							innerdata['delays'][reason] = item['statistics']['minutes delayed'][reason]
-						data.append(innerdata)
+							data[item['carrier']['code']] += item['statistics']['minutes delayed'][reason]
+	for key, value in data.items():
+		response.append({'carrier': key, 'delay': value})
+	return serialize(response)
 
-	return serialize(data)
 
+def get_delay_statistics(airport1, airport2, carrier_code=None, reasons=None):
+	""" returns descriptive statistics """
+	car1 = []
+	car2 = []
+	car = []
+	data = {}
+	response = []
 
-def get_delay_statistics(airport1, airport2, carrier_code=None, carrier_specific=None):
-	data = []
-	list = []
+	if carrier_code is None:
+		for item in airlines:
+			if item['airport']['code'] == airport1 and airport1 not in car1:
+				car1.append(item['carrier']['code'])
+			if item['airport']['code'] == airport2 and airport2 not in car2:
+				car2.append(item['carrier']['code'])
+
+		for item in car1:
+			for item2 in car2:
+				if item == item2:
+					car.append(item)
+					data[item] = []
+					break
+	else:
+		data[carrier_code] = []
+		car.append(carrier_code)
+
 	for item in airlines:
-		if item['carrier']['code'] == carrier_code:
-			if item['airport']['code'] == airport1:
-				list.append(item['statistics']['# of delays'][carrier_specific])
-			if item['airport']['code'] == airport2:
-				list.append(item['statistics']['# of delays'][carrier_specific])
-		elif carrier_code is None:
-			if item['airport']['code'] == airport1:
-				list.append(item['statistics']['# of delays'][carrier_specific])
-			if item['airport']['code'] == airport2:
-				list.append(item['statistics']['# of delays'][carrier_specific])
+		if item['carrier']['code'] in car and (item['airport']['code'] == airport1 or item['airport']['code'] == airport2):
 
-	mean = statistics.mean(list)
-	median = statistics.median(list)
-	std = statistics.stdev(list)
+			data[item['carrier']['code']].append(item['statistics']['minutes delayed'])
 
-	data = {"mean": mean, "median": median, "standard deviation": std}
+	for key, value in data.items():
+		entry = {'carrier': key, 'data': {}, 'statistics': {}}
+		if reasons is None:
+			for reason, dat in value[0].items():
+				entry['data'][reason] = []
+		else:
+			for reason in reasons:
+				entry['data'][reason] = []
 
-	return serialize(data)
+		for item in value:
+			for reason, dat in entry['data'].items():
+				entry['data'][reason].append(item[reason])
+
+		for reason, dat in entry['data'].items():
+			entry['statistics'][reason] = {}
+			entry['statistics'][reason]['mean'] = statistics.mean(entry['data'][reason])
+			entry['statistics'][reason]['median'] = statistics.median(entry['data'][reason])
+			entry['statistics'][reason]['stdev'] = statistics.stdev(entry['data'][reason])
+
+		del entry['data']
+		response.append(entry)
+
+	return serialize(response)
 
 
 app = connexion.App(__name__, specification_dir='./')
