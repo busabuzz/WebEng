@@ -3,6 +3,7 @@ import connexion
 import flask
 import pandas
 import statistics
+from flask_cors import CORS
 from pandas.io.json import json_normalize
 
 with open('airlines.json', 'r') as f:
@@ -52,8 +53,14 @@ def get_carriers():
 def get_airport_carriers(airport_code):
 	data = []
 	for item in airlines:
-		if item['airport']['code'] == airport_code and airport_code not in data:
-			data.append(item['carrier'])
+		in_data = False
+		for i in data:
+			if i['code'] == item['carrier']['code']:
+				in_data = True
+				break
+		if in_data is False:
+		    if item['airport']['code'] == airport_code:
+			    data.append(item['carrier'])
 	return serialize(data)
 
 
@@ -194,6 +201,7 @@ def get_delay_statistics(airport1, airport2, carrier_code=None, reasons=None):
 
 app = connexion.App(__name__, specification_dir='./')
 app.add_api('swagger.yml')
+CORS(app.app)
 
 if __name__ == '__main__':
 	app.run(host=HOST, port=PORT, debug=True)

@@ -15,37 +15,15 @@
     </form>
     <div v-if="show">
       <p>Minutes delayed</p>
-      <table v-if="reason === null" align="center">
+      <table align="center">
         <tr>
           <th>Code</th>
-          <th>Name</th>
-          <th>Carrier</th>
-          <th>Late aircraft</th>
-          <th>National aviation system</th>
-          <th>Security</th>
-          <th>Weather</th>
+          <th>Delay in minutes</th>
         </tr>
         <tr v-for="message of messages">
-          <td>{{message["carrier"]['code']}}</td>
-          <td>{{message["carrier"]['name']}}</td>
-          <td>{{message["delays"]['carrier']}}</td>
-          <td>{{message["delays"]['late aircraft']}}</td>
-          <td>{{message["delays"]['national aviation system']}}</td>
-          <td>{{message["delays"]['security']}}</td>
-          <td>{{message["delays"]['weather']}}</td>
+          <td>{{message["carrier"]}}</td>
+          <td>{{message["delay"]}}</td>
         </tr>
-      </table>
-        <table v-if="reason !== null" align="center">
-          <tr>
-            <th>Code</th>
-            <th>Name</th>
-            <th>{{reason}}</th>
-          </tr>
-          <tr v-for="message of messages">
-            <td>{{message["carrier"]['code']}}</td>
-            <td>{{message["carrier"]['name']}}</td>
-            <td>{{message["delays"][reason]}}</td>
-          </tr>
       </table>
     </div>
   </div>

@@ -23,12 +23,12 @@
           <th>On time</th>
           <th>Total</th>
         </tr>
-        <tr v-for="message of messages">
-          <td>{{message['cancelled']}}</td>
-          <td>{{message['delayed']}}</td>
-          <td>{{message['diverted']}}</td>
-          <td>{{message['on time']}}</td>
-          <td>{{message['total']}}</td>
+        <tr>
+          <td>{{messages['cancelled']}}</td>
+          <td>{{messages['delayed']}}</td>
+          <td>{{messages['diverted']}}</td>
+          <td>{{messages['on time']}}</td>
+          <td>{{messages['total']}}</td>
         </tr>
       </table>
     </div>
@@ -41,7 +41,7 @@
       name: "CarriersOnAirport",
       data() {
         return {
-          messages: [],
+          messages: {},
           show: false,
           carrier_code: "",
           airport_code: "",

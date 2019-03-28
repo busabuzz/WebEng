@@ -19,14 +19,16 @@
       <p>Minutes delayed</p>
       <table v-if="reason !== null" align="center">
         <tr>
+          <th>Carrier</th>
           <th>Mean</th>
           <th>Median</th>
           <th>Standard Deviation</th>
         </tr>
-        <tr>
-          <td>{{messages['mean']}}</td>
-          <td>{{messages['median']}}</td>
-          <td>{{messages['standard deviation']}}</td>
+        <tr v-for="message of messages">
+          <td>{{message['carrier']}}</td>
+          <td>{{message['statistics'][reason]['mean']}}</td>
+          <td>{{message['statistics'][reason]['median']}}</td>
+          <td>{{message['statistics'][reason]['stdev']}}</td>
         </tr>
       </table>
     </div>
@@ -43,7 +45,7 @@
             airport_code2: "",
             carrier_code: null,
             reason: null,
-            messages: {},
+            messages: [],
             show: false,
           }
         },
