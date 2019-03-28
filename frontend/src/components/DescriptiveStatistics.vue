@@ -13,26 +13,59 @@
       <input v-model="carrier_code" placeholder="Enter code">
       <p>Reason:</p>
       <input v-model="reason" placeholder="Enter reason">
-      <p>Month:</p>
-      <input v-model="month" placeholder="Enter month">
       <p><button v-on:click="submit">Submit</button></p>
     </form>
+    <div v-if="show">
+      <p>Minutes delayed</p>
+      <table v-if="reason !== null" align="center">
+        <tr>
+          <th>Mean</th>
+          <th>Median</th>
+          <th>Standard Deviation</th>
+        </tr>
+        <tr>
+          <td>{{messages['mean']}}</td>
+          <td>{{messages['median']}}</td>
+          <td>{{messages['standard deviation']}}</td>
+        </tr>
+      </table>
+    </div>
   </div>
 </template>
 
 <script>
+    import axios from 'axios'
     export default {
         name: "DescriptiveStatistics",
-        data: {
-          airport_code1: "",
-          airport_code2: "",
-          carrier_code: "",
-          reason: "all",
-          month: 0
+        data()  {
+          return {
+            airport_code1: "",
+            airport_code2: "",
+            carrier_code: null,
+            reason: null,
+            messages: {},
+            show: false,
+          }
         },
         methods: {
           submit: function() {
-            alert(this.airport_code1 + " " + this.airport_code2 + " " + this.carrier_code + " " + this.reason + " " + this.month)
+            axios
+              .get('http://localhost:5000/v1/statistics/descriptive', {
+                headers: {
+                  'Accept': 'application/json',
+                },
+                params: {
+                  airport1: this.airport_code1,
+                  airport2: this.airport_code2,
+                  carrier_code: this.carrier_code,
+                  carrier_specific: this.reason,
+                  month: this.month,
+                }
+              })
+              .then((response) => {
+                this.show = true
+                this.messages = response.data
+              })
           }
         }
     }
