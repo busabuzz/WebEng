@@ -50,7 +50,14 @@ paths:
         200:
           description: OK
           schema:
-            $ref: '#/definitions/Carriers'
+            type: array
+            items:
+              type: object
+              properties:
+                code:
+                  type: string
+                name:
+                  type: string
 
   /carriers:
     get:
@@ -66,7 +73,14 @@ paths:
         200:
           description: OK
           schema:
-            $ref: '#/definitions/Carriers'
+            type: array
+            items:
+              type: object
+              properties:
+                code:
+                  type: string
+                name:
+                  type: string
 
   /statistics:
     get:
@@ -248,7 +262,14 @@ paths:
         200:
           description: OK
           schema:
-            $ref: '#/definitions/Carrier_delays'
+            type: array
+            items:
+              type: object
+              properties:
+                carrier:
+                  type: string
+                delay:
+                  type: integer
 
   /statistics/descriptive:
     get:
@@ -256,7 +277,7 @@ paths:
       tags:
         - statistics
       summary: Get descriptive statistics for two airports.
-      description: Returns descriptive statistics; mean, median and standard deviation. For two airports with a carrier specific reason, for all or a certain carrier.
+      description: Returns descriptive statistics; mean, median and standard deviation. For two airports with specific or all reasons, for all or a specific carrier.
       produces:
         - application/json
         - text/csv
@@ -277,19 +298,37 @@ paths:
           required: false
           description: code of the carrier.
         - in: query
-          name: carrier_specific
+          name: reasons
           type: array
           items:
             type: string
           required: false
-          description: reason/all reasons
+          description: reasons
 
 
       responses:
         200:
           description: OK
           schema:
-            $ref: '#/definitions/Descriptive_statistics'
+            type: array
+            items:
+              type: object
+              properties:
+                carrier:
+                  type: string
+                statistics:
+                  type: object
+                  properties:
+                    reason:
+                      type: object
+                      properties:
+                        mean:
+                          type: number
+                        median:
+                          type: number
+                        stdev:
+                          type: number
+
 
 
 definitions:
